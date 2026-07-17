@@ -1,0 +1,19 @@
+# 依赖
+node_modules/
+**/node_modules/
+
+# 构建产物
+web/dist/
+dist/
+
+# 部署脚本运行时生成的配置
+deploy/.deploy.env
+
+# 日志与临时文件
+*.log
+.DS_Store
+*.local
+
+# 编辑器
+.vscode/
+.idea/

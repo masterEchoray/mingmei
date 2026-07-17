@@ -1,0 +1,90 @@
+* {
+  box-sizing: border-box;
+}
+
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+  padding: 0;
+}
+
+body {
+  font-family: 'PingFang SC', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto,
+    'Helvetica Neue', Arial, 'Microsoft YaHei', sans-serif;
+  background: #f0f2f5;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* 页面内容通用容器 */
+.page-container {
+  padding: 16px;
+}
+
+@media (max-width: 576px) {
+  .page-container {
+    padding: 12px;
+  }
+}
+
+/* 让 AntD 表格在窄屏可横向滚动而不撑破布局 */
+.responsive-table .ant-table-wrapper {
+  width: 100%;
+}
+
+/* 统计卡片数值 */
+.stat-value {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+}
+
+@media (max-width: 576px) {
+  .stat-value {
+    font-size: 20px;
+  }
+}
+
+.text-muted {
+  color: rgba(0, 0, 0, 0.45);
+}
+
+.nowrap {
+  white-space: nowrap;
+}
+
+/* 登录页背景 */
+.login-bg {
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: linear-gradient(135deg, #1890ff 0%, #0050b3 100%);
+  padding: 16px;
+}
+
+/* 移动端卡片列表项 */
+.mobile-card-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.mobile-card-row {
+  display: flex;
+  justify-content: space-between;
+  gap: 12px;
+  font-size: 13px;
+  line-height: 1.8;
+}
+
+.mobile-card-row .label {
+  color: rgba(0, 0, 0, 0.45);
+  flex-shrink: 0;
+}
+
+.mobile-card-row .value {
+  text-align: right;
+  word-break: break-all;
+}
