@@ -192,6 +192,37 @@ export interface DashboardData {
   consumeStat: ConsumeStat;
 }
 
+/** 运营端仪表盘 —— 商户数据 */
+export interface MerchantStat {
+  todayNewMerchants: number;
+  activeMerchants: number;
+}
+
+/** 四段式金额统计（今日/昨日/本月/累计） */
+export interface PeriodStat {
+  today: number;
+  yesterday: number;
+  month: number;
+  total: number;
+}
+
+/** 运营端仪表盘 —— 资金数据 */
+export interface FundStat {
+  accountBalance: number;
+  reserveBalance: number;
+  /** 备用金负数待追缴总金额 */
+  reserveNegativeToCollect: number;
+}
+
+/** 运营端仪表盘（比商户端更丰富，见运营端脑图） */
+export interface OperatorDashboardData {
+  platformStats: PlatformAccountStat[];
+  merchantStat: MerchantStat;
+  consumeStat: PeriodStat;
+  rechargeStat: PeriodStat;
+  fundStat: FundStat;
+}
+
 export interface PageResult<T> {
   list: T[];
   total: number;

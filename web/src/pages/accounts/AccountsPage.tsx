@@ -7,6 +7,7 @@ import {
   Space,
   Tag,
   Tabs,
+  Radio,
   Popconfirm,
   App,
 } from 'antd';
@@ -16,7 +17,8 @@ import { useMutation, useQuery, useQueryClient } from '@tanstack/react-query';
 import { PageHeader } from '@/components/PageHeader';
 import { ResponsiveTable } from '@/components/ResponsiveTable';
 import { adAccountApi } from '@/services';
-import type { AdAccount, AdAccountStatus } from '@/types';
+import type { AdAccount, AdAccountStatus, Platform } from '@/types';
+import { PLATFORMS } from '@/types';
 import {
   adAccountStatusColor,
   adAccountStatusLabel,
@@ -37,6 +39,7 @@ export default function AccountsPage() {
   const { message } = App.useApp();
   const queryClient = useQueryClient();
 
+  const [platform, setPlatform] = useState<Platform>('Meta');
   const [statusTab, setStatusTab] = useState<AdAccountStatus | 'all'>('all');
   const [keyword, setKeyword] = useState('');
   const [emptyFilter, setEmptyFilter] = useState<string | undefined>();
@@ -49,9 +52,18 @@ export default function AccountsPage() {
   const [createOpen, setCreateOpen] = useState(false);
 
   const { data, isLoading } = useQuery({
-    queryKey: ['ad-accounts', statusTab, keyword, emptyFilter, page, user.merchantId],
+    queryKey: [
+      'ad-accounts',
+      platform,
+      statusTab,
+      keyword,
+      emptyFilter,
+      page,
+      user.merchantId,
+    ],
     queryFn: () =>
       adAccountApi.list({
+        platform,
         status: statusTab === 'all' ? undefined : statusTab,
         keyword,
         empty: emptyFilter,
@@ -77,7 +89,6 @@ export default function AccountsPage() {
     { title: '账户ID', dataIndex: 'accountId', width: 150 },
     { title: '账户名', dataIndex: 'accountName', width: 180 },
     { title: '绑定邮箱', dataIndex: 'email', width: 200 },
-    { title: '平台', dataIndex: 'platform', width: 90 },
     ...(isOperator
       ? [{ title: '归属商户', dataIndex: 'merchantName', width: 130 } as const]
       : []),
@@ -158,18 +169,13 @@ export default function AccountsPage() {
   ];
 
   const counts = data?.counts;
-  const tabItems = [
-    { key: 'all', label: '全部账户' },
-    { key: 'active', label: `活跃(${counts?.active ?? 0})` },
-    { key: 'disabled', label: `停用(${counts?.disabled ?? 0})` },
-    { key: 'banned', label: `封禁(${counts?.banned ?? 0})` },
-  ];
+  const platformTabs = PLATFORMS.map((p) => ({ key: p, label: p }));
 
   return (
     <div className="page-container">
       <PageHeader
         title="账户管理"
-        subtitle={isOperator ? '全部开通账户的查看与管理' : '查看及管理已开通的全部账户'}
+        subtitle={isOperator ? '全部开通账户的查看与管理' : '查看及管理已开通的全部账号'}
         extra={
           isOperator && (
             <Button
@@ -185,15 +191,29 @@ export default function AccountsPage() {
 
       <Card styles={{ body: { padding: 12 } }}>
         <Tabs
-          activeKey={statusTab}
+          activeKey={platform}
           onChange={(k) => {
-            setStatusTab(k as AdAccountStatus | 'all');
+            setPlatform(k as Platform);
             setPage(1);
           }}
-          items={tabItems}
+          items={platformTabs}
         />
 
         <Space wrap style={{ marginBottom: 12 }}>
+          <Radio.Group
+            value={statusTab}
+            onChange={(e) => {
+              setStatusTab(e.target.value);
+              setPage(1);
+            }}
+            optionType="button"
+            buttonStyle="solid"
+            options={[
+              { label: '全部账户', value: 'all' },
+              { label: `活跃(${counts?.active ?? 0})`, value: 'active' },
+              { label: `停用(${counts?.disabled ?? 0})`, value: 'disabled' },
+            ]}
+          />
           <Input.Search
             allowClear
             placeholder="账户ID / 账户名 / 绑定邮箱"

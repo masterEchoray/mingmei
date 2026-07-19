@@ -1,5 +1,12 @@
 import { Card, Col, Row, Statistic, Tag, Spin } from 'antd';
-import type { ConsumeStat, PlatformAccountStat, Platform } from '@/types';
+import type {
+  ConsumeStat,
+  PlatformAccountStat,
+  Platform,
+  MerchantStat,
+  PeriodStat,
+  FundStat,
+} from '@/types';
 import { money } from '@/utils/format';
 
 const platformColor: Record<Platform, string> = {
@@ -112,6 +119,123 @@ export function ConsumeStatCards({
     <Row gutter={[16, 16]}>
       {items.map((it) => (
         <Col key={it.title} xs={12} sm={12} md={6}>
+          <Card size="small">
+            <Statistic
+              title={it.title}
+              value={money(it.value)}
+              valueStyle={{ fontSize: 20, color: it.color }}
+            />
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
+}
+
+/** 运营端 —— 商户数据 */
+export function MerchantStatCards({
+  stat,
+  loading,
+}: {
+  stat?: MerchantStat;
+  loading?: boolean;
+}) {
+  if (loading || !stat) {
+    return (
+      <div style={{ textAlign: 'center', padding: 40 }}>
+        <Spin />
+      </div>
+    );
+  }
+  const items = [
+    { title: '今日新增商户数', value: stat.todayNewMerchants, color: '#1890ff' },
+    { title: '当前合作总商户数', value: stat.activeMerchants },
+  ];
+  return (
+    <Row gutter={[16, 16]}>
+      {items.map((it) => (
+        <Col key={it.title} xs={12} sm={12} md={6}>
+          <Card size="small">
+            <Statistic
+              title={it.title}
+              value={it.value}
+              valueStyle={{ fontSize: 20, color: it.color }}
+            />
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
+}
+
+/** 运营端 —— 四段式金额（消耗 / 充值 共用） */
+export function PeriodStatCards({
+  stat,
+  labelPrefix,
+  loading,
+}: {
+  stat?: PeriodStat;
+  labelPrefix: string;
+  loading?: boolean;
+}) {
+  if (loading || !stat) {
+    return (
+      <div style={{ textAlign: 'center', padding: 40 }}>
+        <Spin />
+      </div>
+    );
+  }
+  const items: { title: string; value: number; color?: string }[] = [
+    { title: `今日${labelPrefix}`, value: stat.today, color: '#1890ff' },
+    { title: `昨日${labelPrefix}`, value: stat.yesterday },
+    { title: `本月${labelPrefix}`, value: stat.month },
+    { title: `累计${labelPrefix}`, value: stat.total },
+  ];
+  return (
+    <Row gutter={[16, 16]}>
+      {items.map((it) => (
+        <Col key={it.title} xs={12} sm={12} md={6}>
+          <Card size="small">
+            <Statistic
+              title={it.title}
+              value={money(it.value)}
+              valueStyle={{ fontSize: 20, color: it.color }}
+            />
+          </Card>
+        </Col>
+      ))}
+    </Row>
+  );
+}
+
+/** 运营端 —— 资金数据 */
+export function FundStatCards({
+  stat,
+  loading,
+}: {
+  stat?: FundStat;
+  loading?: boolean;
+}) {
+  if (loading || !stat) {
+    return (
+      <div style={{ textAlign: 'center', padding: 40 }}>
+        <Spin />
+      </div>
+    );
+  }
+  const items: { title: string; value: number; color?: string }[] = [
+    { title: '当前账户内总余额', value: stat.accountBalance, color: '#3f8600' },
+    { title: '当前备用金总余额', value: stat.reserveBalance, color: '#3f8600' },
+    {
+      title: '备用金负数待追缴总金额',
+      value: stat.reserveNegativeToCollect,
+      color: '#cf1322',
+    },
+  ];
+  return (
+    <Row gutter={[16, 16]}>
+      {items.map((it) => (
+        <Col key={it.title} xs={12} sm={12} md={8}>
           <Card size="small">
             <Statistic
               title={it.title}

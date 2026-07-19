@@ -35,7 +35,8 @@ export function AdjustBalanceModal({
   const { message } = App.useApp();
 
   useEffect(() => {
-    if (account) form.setFieldsValue({ type: 'add', amount: undefined });
+    if (account)
+      form.setFieldsValue({ type: 'add', currency: 'USD', amount: undefined });
   }, [account, form]);
 
   const mutation = useMutation({
@@ -68,9 +69,11 @@ export function AdjustBalanceModal({
             <Descriptions.Item label="账户当前余额">
               {money(account.balance)}
             </Descriptions.Item>
-            <Descriptions.Item label="币种">美元(USD)</Descriptions.Item>
           </Descriptions>
           <Form form={form} layout="vertical" onFinish={(v) => mutation.mutate(v)}>
+            <Form.Item label="币种" name="currency" initialValue="USD">
+              <Select options={[{ label: '美元（USD）', value: 'USD' }]} />
+            </Form.Item>
             <Form.Item
               label="操作类型"
               name="type"

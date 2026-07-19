@@ -34,10 +34,18 @@ export const handlers = [
   http.get(`${API}/dashboard`, ({ request }) => {
     const url = new URL(request.url);
     const scope = url.searchParams.get('scope') ?? 'merchant';
-    const scale = scope === 'operator' ? 1 : 0.08;
+    if (scope === 'operator') {
+      return delayed({
+        platformStats: db.buildPlatformStats(1),
+        merchantStat: db.buildMerchantStat(),
+        consumeStat: db.buildOperatorConsumeStat(),
+        rechargeStat: db.buildOperatorRechargeStat(),
+        fundStat: db.buildFundStat(),
+      });
+    }
     return delayed({
-      platformStats: db.buildPlatformStats(scale),
-      consumeStat: db.buildConsumeStat(scale),
+      platformStats: db.buildPlatformStats(0.08),
+      consumeStat: db.buildConsumeStat(0.08),
     });
   }),
 
@@ -199,12 +207,17 @@ export const handlers = [
   // -------- 广告账户 --------
   http.get(`${API}/ad-accounts`, ({ request }) => {
     const url = new URL(request.url);
+    const platform = url.searchParams.get('platform');
     const status = url.searchParams.get('status');
     const merchantId = url.searchParams.get('merchantId');
     const emptyFilter = url.searchParams.get('empty');
     const keyword = (url.searchParams.get('keyword') ?? '').toLowerCase();
-    let list = [...db.adAccounts];
-    if (merchantId) list = list.filter((a) => a.merchantId === merchantId);
+    // 平台 + 归属商户为基础范围，状态计数在此范围内统计
+    let scoped = [...db.adAccounts];
+    if (platform) scoped = scoped.filter((a) => a.platform === platform);
+    if (merchantId) scoped = scoped.filter((a) => a.merchantId === merchantId);
+
+    let list = scoped;
     if (status) list = list.filter((a) => a.status === status);
     if (emptyFilter === 'empty') list = list.filter((a) => a.isEmpty);
     if (emptyFilter === 'nonempty') list = list.filter((a) => !a.isEmpty);
@@ -216,9 +229,9 @@ export const handlers = [
           a.email.toLowerCase().includes(keyword),
       );
     const counts = {
-      active: db.adAccounts.filter((a) => a.status === 'active').length,
-      disabled: db.adAccounts.filter((a) => a.status === 'disabled').length,
-      banned: db.adAccounts.filter((a) => a.status === 'banned').length,
+      active: scoped.filter((a) => a.status === 'active').length,
+      disabled: scoped.filter((a) => a.status === 'disabled').length,
+      banned: scoped.filter((a) => a.status === 'banned').length,
     };
     return delayed({ ...paginate(list, url), counts });
   }),

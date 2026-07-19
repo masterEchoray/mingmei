@@ -35,13 +35,19 @@ export function ApplicationFormModal({ open, editing, onClose, onSuccess }: Prop
       if (editing) {
         form.setFieldsValue({
           platform: editing.platform,
+          currency: 'USD',
           timezone: editing.timezone,
           applyCount: editing.applyCount,
           bmids: editing.bmids.length ? editing.bmids : [''],
         });
       } else {
         form.resetFields();
-        form.setFieldsValue({ platform: 'Meta', applyCount: 1, bmids: [''] });
+        form.setFieldsValue({
+          platform: 'Meta',
+          currency: 'USD',
+          applyCount: 1,
+          bmids: [''],
+        });
       }
     }
   }, [open, editing, form]);
@@ -88,6 +94,9 @@ export function ApplicationFormModal({ open, editing, onClose, onSuccess }: Prop
           rules={[{ required: true, message: '请选择需要开户的媒体平台' }]}
         >
           <Select options={PLATFORMS.map((p) => ({ label: p, value: p }))} />
+        </Form.Item>
+        <Form.Item label="币种" name="currency" initialValue="USD">
+          <Select options={[{ label: '美元（USD）', value: 'USD' }]} />
         </Form.Item>
         <Form.Item
           label="时区"

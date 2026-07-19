@@ -91,7 +91,7 @@ export function MerchantWelcome() {
                   }
                 }}
               >
-                {c.enabled ? '立即申请开户' : '敬请期待'}
+                {c.enabled ? '即刻申请开户' : '敬请期待'}
               </Button>
             </Card>
           </Col>

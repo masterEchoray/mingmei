@@ -7,6 +7,7 @@ import type {
   DashboardData,
   Merchant,
   Notification,
+  OperatorDashboardData,
   PageResult,
   RebindRecord,
 } from '@/types';
@@ -15,6 +16,8 @@ import type {
 export const dashboardApi = {
   get: (scope: 'merchant' | 'operator', merchantId?: string) =>
     http.get<DashboardData>('/dashboard', { scope, merchantId }),
+  getOperator: () =>
+    http.get<OperatorDashboardData>('/dashboard', { scope: 'operator' }),
 };
 
 // -------- 商户管理 --------

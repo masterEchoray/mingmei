@@ -219,3 +219,44 @@ export function buildConsumeStat(scale = 1) {
     totalRecharge: Math.round(1_020_446_879.35 * scale * 100) / 100,
   };
 }
+
+// ---------------- 运营端仪表盘（专属脑图） ----------------
+export function buildMerchantStat() {
+  return {
+    todayNewMerchants: 6,
+    activeMerchants: merchants.filter((m) => m.status === 'active').length,
+  };
+}
+
+export function buildOperatorConsumeStat() {
+  return {
+    today: 1_250_000,
+    yesterday: 1_180_000,
+    month: 28_500_000,
+    total: 934_346_879.35,
+  };
+}
+
+export function buildOperatorRechargeStat() {
+  return {
+    today: 1_360_000,
+    yesterday: 1_205_000,
+    month: 31_200_000,
+    total: 1_020_446_879.35,
+  };
+}
+
+export function buildFundStat() {
+  // 备用金负数汇总（待追缴）：取所有为负的备用金余额之和的绝对值
+  const reserveNegativeToCollect =
+    Math.round(
+      merchants
+        .filter((m) => m.reserveBalance < 0)
+        .reduce((sum, m) => sum + m.reserveBalance, 0) * 100,
+    ) / 100;
+  return {
+    accountBalance: 88_787_874.88,
+    reserveBalance: 87_564_454.88,
+    reserveNegativeToCollect: Math.abs(reserveNegativeToCollect),
+  };
+}
