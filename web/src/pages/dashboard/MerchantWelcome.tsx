@@ -1,15 +1,16 @@
-import { Card, Col, Row, Button, Typography, Tag, App } from 'antd';
+import { Card, Col, Row, Button, Typography, Tag } from 'antd';
 import { useNavigate } from 'react-router-dom';
 import { useAuthStore } from '@/store/auth';
 import { PageHeader } from '@/components/PageHeader';
 
-const { Paragraph, Text } = Typography;
+const { Paragraph } = Typography;
 
 interface PlatformCard {
   platform: string;
   color: string;
   slogans: string[];
-  enabled: boolean;
+  /** 是否可点击进入开户流程；第一期仅 Meta 可用，其余仅展示 */
+  actionable: boolean;
 }
 
 const CARDS: PlatformCard[] = [
@@ -21,7 +22,7 @@ const CARDS: PlatformCard[] = [
       '专属绿色通道，降低账号违规和被封风险',
       'Facebook & Ad Spot 跨境，电商客户雏鹰计划',
     ],
-    enabled: true,
+    actionable: true,
   },
   {
     platform: 'Google',
@@ -31,7 +32,7 @@ const CARDS: PlatformCard[] = [
       'Google & Ad Spot 跨境，电商孵化春田计划',
       '官方绿色通道，GMC 快速解封',
     ],
-    enabled: false,
+    actionable: false,
   },
   {
     platform: 'TikTok',
@@ -41,20 +42,19 @@ const CARDS: PlatformCard[] = [
       'TikTok 联合 Ad Spot 跨境，赋能品牌出海',
       'TikTok 官方针对性服务，制定专属营销计划',
     ],
-    enabled: false,
+    actionable: false,
   },
 ];
 
 export function MerchantWelcome() {
   const user = useAuthStore((s) => s.user)!;
   const navigate = useNavigate();
-  const { message } = App.useApp();
 
   return (
     <div className="page-container">
       <PageHeader
         title={`欢迎回来，${user.name}`}
-        subtitle="轻松管理您的投放账户资产 · 选择媒体平台开启您的第一个广告账户"
+        subtitle="轻松管理您的投放账户资产"
       />
       <Row gutter={[16, 16]}>
         {CARDS.map((c) => (
@@ -64,11 +64,6 @@ export function MerchantWelcome() {
               title={
                 <span>
                   <Tag color={c.color}>{c.platform}</Tag> 开户
-                  {!c.enabled && (
-                    <Tag style={{ marginLeft: 8 }} color="default">
-                      即将上线
-                    </Tag>
-                  )}
                 </span>
               }
             >
@@ -82,24 +77,18 @@ export function MerchantWelcome() {
               <Button
                 type="primary"
                 block
-                disabled={!c.enabled}
                 onClick={() => {
-                  if (c.enabled) {
+                  if (c.actionable) {
                     navigate('/applications?open=1');
-                  } else {
-                    message.info(`${c.platform} 开户第一期仅做展示，敬请期待`);
                   }
                 }}
               >
-                {c.enabled ? '即刻申请开户' : '敬请期待'}
+                即刻申请开户
               </Button>
             </Card>
           </Col>
         ))}
       </Row>
-      <Text type="secondary" style={{ display: 'block', marginTop: 16, fontSize: 12 }}>
-        说明：Google、TikTok 开户第一期仅做展示，点击暂无实际功能（依据原型批注）。
-      </Text>
     </div>
   );
 }

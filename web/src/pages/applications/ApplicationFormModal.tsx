@@ -13,7 +13,6 @@ import { MinusCircleOutlined, PlusOutlined } from '@ant-design/icons';
 import { useMutation } from '@tanstack/react-query';
 import { applicationApi } from '@/services';
 import type { AccountApplication } from '@/types';
-import { PLATFORMS } from '@/types';
 import { TIMEZONE_OPTIONS } from '@/utils/labels';
 import { useAuthStore } from '@/store/auth';
 
@@ -93,7 +92,7 @@ export function ApplicationFormModal({ open, editing, onClose, onSuccess }: Prop
           name="platform"
           rules={[{ required: true, message: '请选择需要开户的媒体平台' }]}
         >
-          <Select options={PLATFORMS.map((p) => ({ label: p, value: p }))} />
+          <Select options={[{ label: 'Meta', value: 'Meta' }]} />
         </Form.Item>
         <Form.Item label="币种" name="currency" initialValue="USD">
           <Select options={[{ label: '美元（USD）', value: 'USD' }]} />
@@ -120,7 +119,7 @@ export function ApplicationFormModal({ open, editing, onClose, onSuccess }: Prop
               {fields.map((field, index) => (
                 <Form.Item
                   key={field.key}
-                  label={index === 0 ? '绑定商务BMID（选填）' : ''}
+                  label={index === 0 ? '绑定商务BMID（选填，同批次最多 5 个）' : ''}
                 >
                   <Space>
                     <Form.Item {...field} noStyle>
@@ -137,7 +136,7 @@ export function ApplicationFormModal({ open, editing, onClose, onSuccess }: Prop
                   type="dashed"
                   onClick={() => add()}
                   icon={<PlusOutlined />}
-                  disabled={fields.length >= 30}
+                  disabled={fields.length >= 5}
                 >
                   新增商务BMID
                 </Button>
